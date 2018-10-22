@@ -1,19 +1,20 @@
 const Button = (props) => (
-    <button className={ 'large' in props && 'large' }>
+    <button onClick={props.onClick} className={props.className}>
        { props.children }
        <style jsx>{`
           button {
             padding: 20px;
-            background: #eee;
-            color: #999
+            background: #6842f4;
+            color: #FFF;
+            font-size: 16px;
           }
           @media (max-width: 768px) {
             button {
-                background: lightblue;
+                background: #6842f4;
             }
           }
-          .large {
-            padding: 50px
+          .hidden {
+            display: none;
           }
        `}</style>
     </button>

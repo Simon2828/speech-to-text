@@ -2,6 +2,8 @@ import SpeechRecognition from 'react-speech-recognition'
 import { PropTypes } from 'react'
 import RecordButton from './RecordButton'
 import StopButton from './StopButton'
+import Button from '../components/Button'
+import Tick from '../components/Tick'
 
 // const propTypes = {
 //     // Props injected by SpeechRecognition
@@ -11,13 +13,12 @@ import StopButton from './StopButton'
 // }
 
 const options = {
-    autoStart: false
+    autoStart: true
 }
 
 // use stoplistening after time period of quiet?
 // or stop listening on click - change record button to stop onclick - or have stop button
 // how to access transcript / finished transcript and save into steps to success
-
 
 
 class SpeechToText extends React.Component {
@@ -26,42 +27,100 @@ class SpeechToText extends React.Component {
         super(props);
         this.state = {
             play: true,
-            speech: ''
+            speech: '',
+            show: true
         }
         this.speechRef = React.createRef();
         this.handleClick = this.handleClick.bind(this);
+        this.handleStop = this.handleStop.bind(this);
     }
+
+    componentDidUpdate(prevProps) {
+        console.log('here')
+        if (this.props.finalTranscript !== prevProps.finalTranscript) {
+            console.log('update')
+            console.log('this.props.finalTranscript', this.props.finalTranscript);
+
+            this.setState({ show: false })
+
+            if (!this.props.transcript) {
+                this.setState({ show: !this.state.show })
+            }
+
+        }
+    }
+
 
     handleClick(e) {
-        console.log('this.speechRef', this.speechRef)
         this.setState({
-             play: !this.state.play, 
-            })
+            play: !this.state.play,
+        })
+    }
+
+    handleStop() {
+        if (this.props.finalTranscript) {
+            sessionStorage.setItem('stepToSuccess', this.props.finalTranscript);
+        }
+
 
     }
+
 
     render() {
         const { transcript, resetTranscript, browserSupportsSpeechRecognition, startListening, stopListening } = this.props
 
         if (!browserSupportsSpeechRecognition) {
             return null
-        }
-        let button;
+        } let display;
 
 
         if (this.state.play) {
-            button = <RecordButton onClick={()=>{startListening();this.handleClick();}}>Record</RecordButton>
+            display = <div className={this.state.show ? '' : 'hidden'}>Say your step to success...
+            <style jsx>{`
+            .hidden {
+                display: none;
+            }
+            `}</style>
+            </div>
+            // button = <RecordButton onClick={() => { startListening(); this.handleClick(); }}>Record</RecordButton>
         }
         else {
-            button = <StopButton onClick={(e)=>{stopListening();this.handleClick(e);}}>Stop</StopButton>
+            display = <StopButton onClick={() => { this.handleStop(); stopListening(); resetTranscript(); }}>Stop</StopButton>
         }
 
+        // when finalTranscript is not empty
+        // after pause, let tick come in to see if confirm as step to suc -> save to local
+        // have tooltip to show tick will save to step to suc
+
+
+        // Listening text on componentdidmount?
+
+
+
+        // stop listening on componentwillunmount
+
+        // confirm step to success - tick box
+        // hide while transcript is empty
 
         return (
             <div>
-                {button}
-                <button onClick={resetTranscript}>Reset</button>
-                <div ref={this.speechRef}>{transcript}</div>
+                <Button className={this.props.finalTranscript ? '' : 'hidden'} onClick={resetTranscript}>Reset</Button>
+                <span>{display}</span>
+                <Tick className='hidden'>
+                    <style jsx>{`
+                    .hidden {
+                        display: none
+                    }
+
+                    `}
+                    </style>
+                </Tick>
+                <div ref={this.speechRef}>{transcript}
+                    <style jsx>{`
+                        margin-top: 20px;
+                    `
+                    }</style>
+                </div>
             </div >
 
         )
