@@ -1,43 +1,37 @@
+import Layout from '../components/Layout.js'
+import MobileMenu from '../components/MobileMenu.js'
+import Header from '../components/Header.js'
+import Link from 'next/link'
+
+
 class Index extends React.Component {
     constructor(props) {
         super(props);
-        this.state = ''
-    } 
-    onStart() {
-        this.setState({
-            recording: true
-        });
-        if(this.props.onStart) {
-            this.props.onStart();
+        this.state = {
+            mobileMenu: true,
         }
-        speechToTextUtils.initRecording((data) => {
-            // NEED TO PASS IN PROPS.ONUPDATE...//
-            // USE REACT NO SSR?? //
-
-            if(this.props.onUpdate) {
-                this.props.onUpdate(data);
-            }   
-        }, (error) => {
-            console.error('Error when recording', error);
-            this.setState({recording: false});
-            // No further action needed, as this already closes itself on error
-        });
+        this.toggleMenu = this.toggleMenu.bind(this);
     }
-    
-    onStop() {
-        this.setState({recording: false});
-        speechToTextUtils.stopRecording();
-        if(this.props.onStop) {
-            // NEED TO PASS IN PROPS.ONSTOP...//
-            this.props.onStop();
-        }
+
+    toggleMenu() {
+        this.setState({ mobileMenu: !this.state.mobileMenu })
     }
 
     render() {
+        let mobileMenu = this.state.mobileMenu ? '-hidden' : ''
         return (
-            <div>hi world</div>
+            <div>
+                <Header toggleMenu={this.toggleMenu} />
+                <Layout>
+                    <MobileMenu hidden={mobileMenu} toggleMenu={this.toggleMenu} />
+                </Layout>
+                <Link href="/step-to-success">
+                    <a>Add Step to Success</a>
+                </Link>
+            </div>
         )
     }
+
 }
-  
-  export default Index
+
+export default Index

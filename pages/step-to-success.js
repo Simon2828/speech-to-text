@@ -5,6 +5,7 @@ import Header from '../components/Header.js'
 import NoSSR from 'react-no-ssr';
 import LoadingIndicator from '../components/LoadingIndicator.js'
 import SpeechToText from '../components/SpeechToText'
+import LearningObjective from '../components/LearningObjective.js'
 
 
 
@@ -34,6 +35,9 @@ class Index extends React.Component {
                         <SpeechToText />                   
                     </NoSSR>
                 </Layout>
+                <LearningObjective>
+                    Learning Objective
+                </LearningObjective> 
             </div>
         )
     }

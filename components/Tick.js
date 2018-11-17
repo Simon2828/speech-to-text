@@ -1,5 +1,5 @@
-const Tick = () => (
-<div className="icon-animated icon-animated-tick" tabIndex="-1" aria-hidden="true">
+const Tick = (props) => (
+<div className={`icon-animated icon-animated-tick ${props.className}`} tabIndex="-1" aria-hidden="true">
 	<svg className="circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
 		<circle cx="50" cy="50" r="50"/>
 	</svg>
@@ -63,6 +63,13 @@ const Tick = () => (
                 opacity: 0;
             }
             
+            .hidden {
+                display: none;
+            }
+
+            .visible {
+                margin-left: 20px;
+            }
             
             @keyframes tick-swipe1 {
                 0% {
