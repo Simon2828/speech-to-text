@@ -26,7 +26,8 @@ class SpeechToText extends React.Component {
     this.state = {
       play: true,
       speech: "",
-      show: true
+      show: true,
+      transcripts: []
     };
     this.speechRef = React.createRef();
     this.handleClick = this.handleClick.bind(this);
@@ -34,17 +35,23 @@ class SpeechToText extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log("here");
     if (this.props.finalTranscript !== prevProps.finalTranscript) {
-      console.log("update");
-      console.log("this.props.finalTranscript", this.props.finalTranscript);
-
+      if (this.props.finalTranscript.slice(0,11) === 'change step') {
+        console.log('heree')
+        this.reRecordStep();
+        return;
+      }
       this.setState({ show: false });
-
+      this.setState({transcripts: [...this.state.transcripts, this.props.finalTranscript]})
+      this.props.resetTranscript();
       if (!this.props.transcript) {
         this.setState({ show: !this.state.show });
       }
     }
+  }
+
+  componentWillUnmount() {
+    this.props.stopListening();
   }
 
   handleClick(e) {
@@ -57,6 +64,32 @@ class SpeechToText extends React.Component {
     if (this.props.finalTranscript) {
       sessionStorage.setItem("stepToSuccess", this.props.finalTranscript);
     }
+  }
+
+  // change step ${num}
+  // 
+
+  // 
+
+  reRecordStep() {
+    console.log('in rerecord')
+    console.log('finaltrans', this.props.finalTranscript)
+    switch(this.props.finalTranscript) {
+      case 'change step 1':
+        console.log('1');
+        // update state of transcripts
+        const newTranscripts = [...this.state.transcripts];
+        newTranscripts[0] = 'Listening'
+        this.setState({transcripts: newTranscripts})
+        break;
+      case 'change step 2':
+        console.log('2');
+        break;
+      case 'change step 3':
+        console.log('3');
+        break;
+    }
+    this.props.resetTranscript()
   }
 
   render() {
@@ -99,16 +132,18 @@ class SpeechToText extends React.Component {
       );
     }
 
-    // when finalTranscript is not empty
-    // after pause, let tick come in to see if confirm as step to suc -> save to local
-    // have tooltip to show tick will save to step to suc
+    let stepsToSuccess = this.state.transcripts.map((step)=>{
+      return (
+        <React.Fragment>
+          <div>{step}</div>
+          <Tick className={step ? "visible" : "hidden"} />
+        </React.Fragment>
+      )
+    })
 
-    // Listening text on componentdidmount?
 
     // stop listening on componentwillunmount
 
-    // confirm step to success - tick box
-    // hide while transcript is empty
 
     return (
       <div>
@@ -118,14 +153,13 @@ class SpeechToText extends React.Component {
         >
           Reset
         </Button>
-        <span>{display}</span>
-        <div ref={this.speechRef}>
-          {transcript}
+        <h4>Steps to Success</h4>
+        <span>{stepsToSuccess}</span>
+ 
           <style jsx>{`
             margin-top: 20px;
           `}</style>
-        <Tick className={this.props.finalTranscript ? "visible" : "hidden"} />
-        </div>
+
       </div>
     );
   }

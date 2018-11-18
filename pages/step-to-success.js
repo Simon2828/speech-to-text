@@ -29,15 +29,15 @@ class Index extends React.Component {
         return (
             <div>
                 <Header toggleMenu={this.toggleMenu} />
+                <LearningObjective>
+                    Learning Objective
+                </LearningObjective> 
                 <Layout>
                     <MobileMenu hidden={mobileMenu} toggleMenu={this.toggleMenu} />
                     <NoSSR onSSR={<LoadingIndicator />}>  
                         <SpeechToText />                   
                     </NoSSR>
                 </Layout>
-                <LearningObjective>
-                    Learning Objective
-                </LearningObjective> 
             </div>
         )
     }
