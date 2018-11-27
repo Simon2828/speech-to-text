@@ -16,6 +16,9 @@ const options = {
   autoStart: true
 };
 
+let stepsToSuccess;
+let newTranscripts;
+
 // use stoplistening after time period of quiet?
 // or stop listening on click - change record button to stop onclick - or have stop button
 // how to access transcript / finished transcript and save into steps to success
@@ -34,24 +37,44 @@ class SpeechToText extends React.Component {
     this.handleStop = this.handleStop.bind(this);
   }
 
+  componentWillUnmount() {
+    this.props.stopListening();
+  }
+
+  // problem how to edit step from previous part in array
+  // issue with props of undefined - setState and check with that...
+
   componentDidUpdate(prevProps) {
+    if (stepsToSuccess.length > 1) {
+      console.log("stepsToSuccess", stepsToSuccess);
+      if (stepsToSuccess[0].props.children[0].props.children) {
+        console.log("B");
+        if (
+          stepsToSuccess[0].props.children[0].props.children === "Listening..."
+        ) {
+          let newTranscripts = [...this.state.transcripts];
+          newTranscripts[0] = this.props.finalTranscript;
+          console.log("here in dasfsa");
+          this.setState({ transcripts: newTranscripts });
+        }
+      }
+    }
+
     if (this.props.finalTranscript !== prevProps.finalTranscript) {
-      if (this.props.finalTranscript.slice(0,11) === 'change step') {
-        console.log('heree')
-        this.reRecordStep();
+      if (this.props.finalTranscript.slice(0, 11) === "change step") {
+        console.log("heree");
+        this.editStep();
         return;
       }
       this.setState({ show: false });
-      this.setState({transcripts: [...this.state.transcripts, this.props.finalTranscript]})
+      this.setState({
+        transcripts: [...this.state.transcripts, this.props.finalTranscript]
+      });
       this.props.resetTranscript();
       if (!this.props.transcript) {
         this.setState({ show: !this.state.show });
       }
     }
-  }
-
-  componentWillUnmount() {
-    this.props.stopListening();
   }
 
   handleClick(e) {
@@ -66,30 +89,44 @@ class SpeechToText extends React.Component {
     }
   }
 
-  // change step ${num}
-  // 
-
-  // 
-
-  reRecordStep() {
-    console.log('in rerecord')
-    console.log('finaltrans', this.props.finalTranscript)
-    switch(this.props.finalTranscript) {
-      case 'change step 1':
-        console.log('1');
+  editStep() {
+    console.log("finaltrans", this.props.finalTranscript);
+    switch (this.props.finalTranscript) {
+      case "change step 1":
+        console.log("1");
         // update state of transcripts
-        const newTranscripts = [...this.state.transcripts];
-        newTranscripts[0] = 'Listening'
-        this.setState({transcripts: newTranscripts})
+        newTranscripts = [...this.state.transcripts];
+        newTranscripts[0] = "Listening...";
+        this.setState({ transcripts: newTranscripts });
+        this.props.resetTranscript();
         break;
-      case 'change step 2':
-        console.log('2');
+      case "change step 2":
+        console.log("2");
         break;
-      case 'change step 3':
-        console.log('3');
+      case "change step 3":
+        console.log("3");
         break;
     }
-    this.props.resetTranscript()
+    this.props.resetTranscript();
+  }
+
+  // when to rerecord
+  // in componentdidupdate
+  // if stepstosuccess[0] is 'Listening...
+  // set state of transcripts to 0 using same technique as in editstep - spread operator
+
+  reRecordStep() {
+    console.log("in rerecord");
+    if (this.props.finalTranscript) {
+      // update state
+      console.log("in rerecord true");
+      const updatedTranscripts = [...this.state.transcripts];
+      updatedTranscripts[0] = this.props.finalTranscript;
+      console.log("updatedTranscrips[0]", updatedTranscripts[0]);
+    } else {
+      console.log("in else");
+      this.reRecordStep();
+    }
   }
 
   render() {
@@ -132,18 +169,14 @@ class SpeechToText extends React.Component {
       );
     }
 
-    let stepsToSuccess = this.state.transcripts.map((step)=>{
+    stepsToSuccess = this.state.transcripts.map(step => {
       return (
         <React.Fragment>
           <div>{step}</div>
           <Tick className={step ? "visible" : "hidden"} />
         </React.Fragment>
-      )
-    })
-
-
-    // stop listening on componentwillunmount
-
+      );
+    });
 
     return (
       <div>
@@ -155,11 +188,10 @@ class SpeechToText extends React.Component {
         </Button>
         <h4>Steps to Success</h4>
         <span>{stepsToSuccess}</span>
- 
-          <style jsx>{`
-            margin-top: 20px;
-          `}</style>
 
+        <style jsx>{`
+          margin-top: 20px;
+        `}</style>
       </div>
     );
   }
