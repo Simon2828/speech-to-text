@@ -4,6 +4,7 @@ import RecordButton from "./RecordButton";
 import StopButton from "./StopButton";
 import Button from "../components/Button";
 import Tick from "../components/Tick";
+import { runInThisContext } from "vm";
 
 // const propTypes = {
 //     // Props injected by SpeechRecognition
@@ -19,6 +20,8 @@ const options = {
 let stepsToSuccess;
 let newTranscripts;
 
+let steps;
+
 // use stoplistening after time period of quiet?
 // or stop listening on click - change record button to stop onclick - or have stop button
 // how to access transcript / finished transcript and save into steps to success
@@ -30,7 +33,8 @@ class SpeechToText extends React.Component {
       play: true,
       speech: "",
       show: true,
-      transcripts: []
+      transcripts: [],
+      editing: false
     };
     this.speechRef = React.createRef();
     this.handleClick = this.handleClick.bind(this);
@@ -44,58 +48,106 @@ class SpeechToText extends React.Component {
   // problem how to edit step from previous part in array
   // issue with props of undefined - setState and check with that...
 
-
   // make more modular - functions for updating stepstosuccess
   // addStep()   editStepToListening()  need something for when listening for edit...
   // if clause in component didupdate if editSteptolistening called - set state editing - boolean
   // changeStep() - called if editStepToListening has been called above state is set
-  
-
 
   // if editing state true
   //  changeStep()
   // if editing state false
   //  check if finaltranscript is 'change step x'
-  //    editStepToListening()  
+  //    editStepToListening()
   //  else addStep()
 
-
-  //when to reset finaltranscript - do it at end of each function... 
+  //when to reset finaltranscript - do it at end of each function...
   // but don't call componentdidupdate
   // check for whether finaltranscript is empty but had problems with this before...
 
-  componentDidUpdate(prevProps) {
-    if (stepsToSuccess.length > 1) {
-      console.log("stepsToSuccess", stepsToSuccess);
-      if (stepsToSuccess[0].props.children[0].props.children) {
-        console.log("B");
-        if (
-          stepsToSuccess[0].props.children[0].props.children === "Listening..."
-        ) {
-          let newTranscripts = [...this.state.transcripts];
-          newTranscripts[0] = this.props.finalTranscript;
-          console.log("here in dasfsa");
+  editStepToListening() {
+    // map over stepsToSuccess to avoid altering state directly
+    let n = 0; // n is argument - change
 
-          // lots of empty elements in array - need to stop setting state unless updated
+    steps = this.state.transcripts.map((step, i) => {
+      if (i === n) {
+        step = "Listening...";
+      }
+      return (
+        <React.Fragment key={i}>
+          <li key={i}>{step}</li>
+          <Tick className={step ? "visible" : "hidden"} />
+        </React.Fragment>
+      );
+    });
 
-          this.setState({ transcripts: newTranscripts });
+    this.state.transcripts[0] = "Listening..."; // change to number variable...
+    this.setState({
+      transcripts: [...this.state.transcripts],
+      editing: true
+    });
+    this.props.resetTranscript();
+  }
+
+  addStep() {
+    if (this.props.finalTranscript.length > 1) {
+      this.setState(
+        {
+          transcripts: [...this.state.transcripts, this.props.finalTranscript]
+        },
+        () => {
+          this.getSteps();
         }
-      }
-    }
-
-    if (this.props.finalTranscript !== prevProps.finalTranscript) {
-      if (this.props.finalTranscript.slice(0, 11) === "change step") {
-        console.log("heree");
-        this.editStep();
-        return;
-      }
-      this.setState({ show: false });
-      this.setState({
-        transcripts: [...this.state.transcripts, this.props.finalTranscript]
-      });
+      );
       this.props.resetTranscript();
-      if (!this.props.transcript) {
-        this.setState({ show: !this.state.show });
+    }
+  }
+
+  getSteps() {
+    steps = this.state.transcripts.map((step, i) => {
+      return (
+        <React.Fragment key={i}>
+          <li key={i}>{step}</li>
+          <Tick className={step ? "visible" : "hidden"} />
+        </React.Fragment>
+      );
+    });
+    return steps;
+  }
+
+  change() {
+    steps = this.state.transcripts.map((step, i) => {
+      if (step === "Listening...") {
+        step = this.props.finalTranscript;
+      }
+      return (
+        <React.Fragment key={i}>
+          <li key={i}>{step}</li>
+          <Tick className={step ? "visible" : "hidden"} />
+        </React.Fragment>
+      );
+    });
+  }
+
+  changeStep() {
+    let newTranscripts = [...this.state.transcripts];
+    newTranscripts[0] = this.props.finalTranscript; // change to number argument
+    this.setState({ transcripts: newTranscripts }, () => this.change());
+
+    this.setState({ editing: false });
+    this.props.resetTranscript();
+    return steps;
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.finalTranscript !== prevProps.finalTranscript) {
+      if (this.state.editing && this.props.finalTranscript !== "") {
+        this.changeStep(); // put in number for argument for el in array
+      } else {
+        if (this.props.finalTranscript.slice(0, 11) === "change step") {
+          this.editStepToListening();
+        } else {
+          this.addStep();
+        }
       }
     }
   }
@@ -192,15 +244,6 @@ class SpeechToText extends React.Component {
       );
     }
 
-    stepsToSuccess = this.state.transcripts.map(step => {
-      return (
-        <React.Fragment>
-          <div>{step}</div>
-          <Tick className={step ? "visible" : "hidden"} />
-        </React.Fragment>
-      );
-    });
-
     return (
       <div>
         <Button
@@ -210,7 +253,7 @@ class SpeechToText extends React.Component {
           Reset
         </Button>
         <h4>Steps to Success</h4>
-        <span>{stepsToSuccess}</span>
+        <span>{steps}</span>
 
         <style jsx>{`
           margin-top: 20px;
