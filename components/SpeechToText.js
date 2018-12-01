@@ -44,6 +44,26 @@ class SpeechToText extends React.Component {
   // problem how to edit step from previous part in array
   // issue with props of undefined - setState and check with that...
 
+
+  // make more modular - functions for updating stepstosuccess
+  // addStep()   editStepToListening()  need something for when listening for edit...
+  // if clause in component didupdate if editSteptolistening called - set state editing - boolean
+  // changeStep() - called if editStepToListening has been called above state is set
+  
+
+
+  // if editing state true
+  //  changeStep()
+  // if editing state false
+  //  check if finaltranscript is 'change step x'
+  //    editStepToListening()  
+  //  else addStep()
+
+
+  //when to reset finaltranscript - do it at end of each function... 
+  // but don't call componentdidupdate
+  // check for whether finaltranscript is empty but had problems with this before...
+
   componentDidUpdate(prevProps) {
     if (stepsToSuccess.length > 1) {
       console.log("stepsToSuccess", stepsToSuccess);
@@ -55,6 +75,9 @@ class SpeechToText extends React.Component {
           let newTranscripts = [...this.state.transcripts];
           newTranscripts[0] = this.props.finalTranscript;
           console.log("here in dasfsa");
+
+          // lots of empty elements in array - need to stop setting state unless updated
+
           this.setState({ transcripts: newTranscripts });
         }
       }
