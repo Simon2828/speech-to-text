@@ -64,13 +64,18 @@ class SpeechToText extends React.Component {
   // but don't call componentdidupdate
   // check for whether finaltranscript is empty but had problems with this before...
 
-  editStepToListening() {
+  editStepToListening(stepIndex) {
     // map over stepsToSuccess to avoid altering state directly
-    let n = 0; // n is argument - change
+    let n = stepIndex; // n is argument - change
+
+    console.log("n", n);
+
+    // state to be updated as steps
 
     steps = this.state.transcripts.map((step, i) => {
-      if (i === n) {
+      if (i + 1 === Number(n)) {
         step = "Listening...";
+        console.log("step", step);
       }
       return (
         <React.Fragment key={i}>
@@ -80,9 +85,14 @@ class SpeechToText extends React.Component {
       );
     });
 
-    this.state.transcripts[0] = "Listening..."; // change to number variable...
+    // make copy of array so not mutating directly
+    // need to change a particular element in the state array
+
+    let listWithOneElementListening = [...this.state.transcripts];
+    listWithOneElementListening[stepIndex] = "Listening...";
+
     this.setState({
-      transcripts: [...this.state.transcripts],
+      transcripts: listWithOneElementListening,
       editing: true
     });
     this.props.resetTranscript();
@@ -114,43 +124,85 @@ class SpeechToText extends React.Component {
     return steps;
   }
 
-  change() {
-    steps = this.state.transcripts.map((step, i) => {
-      if (step === "Listening...") {
-        step = this.props.finalTranscript;
-      }
-      return (
-        <React.Fragment key={i}>
-          <li key={i}>{step}</li>
-          <Tick className={step ? "visible" : "hidden"} />
-        </React.Fragment>
-      );
-    });
-  }
+  // change() {
+  //   steps = this.state.transcripts.map((step, i) => {
+  //     if (step === "Listening...") {
+  //       step = this.props.finalTranscript;
+  //       // call setState here, don't return below??
+  //     }
+  //     return (
+  //       <React.Fragment key={i}>
+  //         <li key={i}>{step}</li>
+  //         <Tick className={step ? "visible" : "hidden"} />
+  //       </React.Fragment>
+  //     );
+  //   });
+  // }
 
-  changeStep() {
+  changeStep(stepIndex) {
     let newTranscripts = [...this.state.transcripts];
-    newTranscripts[0] = this.props.finalTranscript; // change to number argument
-    this.setState({ transcripts: newTranscripts }, () => this.change());
+    newTranscripts[stepIndex + 1] = this.props.finalTranscript;
+    // this.setState({ transcripts: newTranscripts }, () => this.change());
+    this.setState({ transcripts: newTranscripts }, () => this.getSteps());
 
     this.setState({ editing: false });
     this.props.resetTranscript();
-    return steps;
+    // return steps;
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.finalTranscript !== prevProps.finalTranscript) {
-      if (this.state.editing && this.props.finalTranscript !== "") {
-        this.changeStep(); // put in number for argument for el in array
+      // if (this.state.editing && this.props.finalTranscript !== "") {
+      //   let transcriptIndex = this.getEndWord(this.props.finalTranscript)
+      //   this.changeStep(transcriptIndex); // put in number for argument for el in array
+      // } else {
+      if (this.props.finalTranscript.slice(0, 11) === "change step") {
+        // could use speech api Grammar object instead?
+
+        let transcriptIndex = this.getEndWord(this.props.finalTranscript);
+
+        console.log("transcriptIndex", transcriptIndex);
+
+        this.editStepToListening(transcriptIndex);
       } else {
-        if (this.props.finalTranscript.slice(0, 11) === "change step") {
-          this.editStepToListening();
-        } else {
-          this.addStep();
+        // check whether an element in transcripts state array is 'Listening...'
+        // if it is, don't want to call addStep but change the particular element which is 'Listening...'
+
+        let index;
+
+        if (
+          this.state.transcripts.find((element, i) => {
+            index = i;
+            element === "Listening...";
+          })
+        ) {
+          this.changeStep(index);
+          // use a promise for when
         }
+
+        this.addStep();
       }
+      // }
     }
   }
+
+  getEndWord(transcript) {
+    let n = transcript.split(" ");
+    let index = n[n.length - 1];
+
+    if (index === "to") {
+      index = 2;
+    }
+    return index;
+  }
+
+  // put in number argument to editStepToListening() ... how to get that to changeStep()??
+  // get substring of end of props.finalTranscript - put that into variable to pass into
+  // changeStep() and editStepToListening()...
+
+  // need to get index of array state.transcripts - map
+  // could use switch statement...
+  // compare to voice...
 
   handleClick(e) {
     this.setState({
