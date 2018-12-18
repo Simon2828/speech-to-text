@@ -75,11 +75,12 @@ class SpeechToText extends React.Component {
     steps = this.state.transcripts.map((step, i) => {
       if (i + 1 === Number(n)) {
         step = "Listening...";
-        console.log("step", step);
       }
       return (
         <React.Fragment key={i}>
-          <li key={i}>{step}</li>
+          <li key={i}>
+            {step}
+          </li>
           <Tick className={step ? "visible" : "hidden"} />
         </React.Fragment>
       );
@@ -89,7 +90,7 @@ class SpeechToText extends React.Component {
     // need to change a particular element in the state array
 
     let listWithOneElementListening = [...this.state.transcripts];
-    listWithOneElementListening[stepIndex] = "Listening...";
+    listWithOneElementListening[stepIndex - 1] = "Listening...";
 
     this.setState({
       transcripts: listWithOneElementListening,
@@ -173,14 +174,16 @@ class SpeechToText extends React.Component {
         if (
           this.state.transcripts.find((element, i) => {
             index = i;
-            element === "Listening...";
-          })
+            return element === "Listening...";
+          }) &&
+          this.props.finalTranscript !== ""
         ) {
-          this.changeStep(index);
+          console.log("changeStep called");
+          this.changeStep(index - 1);
           // use a promise for when
+        } else {
+          this.addStep();
         }
-
-        this.addStep();
       }
       // }
     }
@@ -270,15 +273,14 @@ class SpeechToText extends React.Component {
     }
     let display;
 
+    //change below...
+
     if (this.state.play) {
       display = (
         <div className={this.state.show ? "" : "hidden"}>
-          Say your step to success...
-          <style jsx>{`
-            .hidden {
-              display: none;
-            }
-          `}</style>
+        Say your steps to success
+          
+
         </div>
       );
       // button = <RecordButton onClick={() => { startListening(); this.handleClick(); }}>Record</RecordButton>
@@ -304,10 +306,41 @@ class SpeechToText extends React.Component {
         >
           Reset
         </Button>
-        <h4>Steps to Success</h4>
-        <span>{steps}</span>
+        <ol>{steps}</ol>
+        <style jsx>
+          {`
+            div:before {
+              content: "Say your Steps to Success";
+              animation-name: listening;
+              animation-duration: 2.5s;
+              animation-iteration-count: infinite;
+            }
 
+            @keyframes listening {
+              
+              0% {
+                content: "Say your Steps to Success";
+              }
+
+              25% {
+                content: "Say your Steps to Success.";
+              }
+
+              50% {
+                content: "Say your Steps to Success..";
+              }
+
+              75% {
+                content: "Say your Steps to Success...";
+              }
+            }
+        .hidden {
+          display: none;
+        }
+          `}
+        </style>
         <style jsx>{`
+          margin-left: 10px;
           margin-top: 20px;
         `}</style>
       </div>

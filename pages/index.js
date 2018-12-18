@@ -4,6 +4,7 @@ import Header from '../components/Header.js'
 import Link from 'next/link'
 
 
+
 class Index extends React.Component {
     constructor(props) {
         super(props);
@@ -25,8 +26,9 @@ class Index extends React.Component {
                 <Layout>
                     <MobileMenu hidden={mobileMenu} toggleMenu={this.toggleMenu} />
                 </Layout>
+                  <h4>If you can say it, you can write it.</h4>
                 <Link href="/step-to-success">
-                    <a>Add Step to Success</a>
+                    <a>Get started!</a>
                 </Link>
             </div>
         )

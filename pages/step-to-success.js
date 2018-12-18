@@ -6,6 +6,7 @@ import NoSSR from 'react-no-ssr';
 import LoadingIndicator from '../components/LoadingIndicator.js'
 import SpeechToText from '../components/SpeechToText'
 import LearningObjective from '../components/LearningObjective.js'
+import { DateToday } from '../components/DateToday.js';
 
 
 
@@ -14,7 +15,8 @@ class Index extends React.Component {
         super(props);
         this.state = { 
             mobileMenu: true, 
-            recording: false
+            recording: false,
+            learningObjective: ''
         }
         this.toggleMenu = this.toggleMenu.bind(this);
     }
@@ -29,13 +31,11 @@ class Index extends React.Component {
         return (
             <div>
                 <Header toggleMenu={this.toggleMenu} />
-                <LearningObjective>
-                    Learning Objective
-                </LearningObjective> 
+                    <DateToday />
                 <Layout>
                     <MobileMenu hidden={mobileMenu} toggleMenu={this.toggleMenu} />
                     <NoSSR onSSR={<LoadingIndicator />}>  
-                        <SpeechToText />                   
+                <SpeechToText />                 
                     </NoSSR>
                 </Layout>
             </div>

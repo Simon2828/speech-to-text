@@ -5,8 +5,7 @@ import Head from 'next/head'
 const layoutStyle = {
   margin: 20,
   padding: 20,
-  border: '1px solid #DDD',
-  height: 200
+  minHeight: 100
 }
 
 const Layout = (props) => (

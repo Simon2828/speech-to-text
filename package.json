@@ -18,5 +18,8 @@
     "react-dom": "^16.5.2",
     "react-no-ssr": "^1.1.0",
     "react-speech-recognition": "^1.0.7"
+  },
+  "devDependencies": {
+    "jest": "^23.6.0"
   }
 }
