@@ -7,6 +7,7 @@ import LoadingIndicator from '../components/LoadingIndicator.js'
 import SpeechToText from '../components/SpeechToText'
 import LearningObjective from '../components/LearningObjective.js'
 import { DateToday } from '../components/DateToday.js';
+import { LoConsumer } from "../components/LearningObjectiveProvider";
 
 
 
@@ -33,6 +34,9 @@ class Index extends React.Component {
                 <Header toggleMenu={this.toggleMenu} />
                     <DateToday />
                 <Layout>
+                    <LoConsumer>
+                        {({state})=><h4>L.O. {state.value}</h4>}
+                    </LoConsumer>
                     <MobileMenu hidden={mobileMenu} toggleMenu={this.toggleMenu} />
                     <NoSSR onSSR={<LoadingIndicator />}>  
                 <SpeechToText />                 
