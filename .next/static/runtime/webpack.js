@@ -64,7 +64,7 @@
 /******/ 		var script = document.createElement("script");
 /******/ 		script.charset = "utf-8";
 /******/ 		script.src = __webpack_require__.p + "static/webpack/" + chunkId + "." + hotCurrentHash + ".hot-update.js";
-/******/ 		;
+/******/ 		if (null) script.crossOrigin = null;
 /******/ 		head.appendChild(script);
 /******/ 	}
 /******/
@@ -113,7 +113,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "bfb689a652cf00fc27ad";
+/******/ 	var hotCurrentHash = "cbb9a17ea4926d507587";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
