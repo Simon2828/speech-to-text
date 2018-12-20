@@ -7,9 +7,12 @@ const LoContext = React.createContext();
 class LearningObjectiveProvider extends Component {
 
   state = {
-    lO: 'write sentences',
-    value: ''
-  };
+      lO: 'write sentences',
+      value: '',
+      mobileMenu: true
+    };
+
+
 
   render() {
     return (
@@ -19,6 +22,11 @@ class LearningObjectiveProvider extends Component {
           handleChange: (event) => {
             console.log('event.target.value', event.target.value)
             this.setState({value: event.target.value})
+          
+          },
+          toggleMenu: () => {
+            console.log('here')
+            this.setState({mobileMenu : !this.state.mobileMenu})
           }
         }}
       >

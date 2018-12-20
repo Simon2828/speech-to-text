@@ -144,7 +144,8 @@ function (_Component) {
 
     Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_6__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_5__["default"])(Object(_babel_runtime_corejs2_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_5__["default"])(_this)), "state", {
       lO: 'write sentences',
-      value: ''
+      value: '',
+      mobileMenu: true
     });
 
     return _this;
@@ -164,11 +165,18 @@ function (_Component) {
             _this2.setState({
               value: event.target.value
             });
+          },
+          toggleMenu: function toggleMenu() {
+            console.log('here');
+
+            _this2.setState({
+              mobileMenu: !_this2.state.mobileMenu
+            });
           }
         },
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 16
+          lineNumber: 19
         },
         __self: this
       }, this.props.children);

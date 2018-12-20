@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import {mainColor} from '../styles.js'
+import { LoConsumer } from './LearningObjectiveProvider'
 
 const linkStyle = {
     marginLeft : 'auto'
@@ -10,6 +10,8 @@ const Header = ({toggleMenu}) => (
         <Link href="/">
             <a>Steps To Success</a>
         </Link>
+            <LoConsumer>
+                {({toggleMenu})=> (
             <div onClick={toggleMenu} style={linkStyle}>
                 <svg viewBox="0 0 50 50" version="1.1" width="25px" height="25px" fill='green'>
                     <g id="surface1">
@@ -17,6 +19,9 @@ const Header = ({toggleMenu}) => (
                     </g>
                 </svg>
             </div>
+
+                )}
+            </LoConsumer>
         <style jsx>{`
             .flex {
                 display: flex;

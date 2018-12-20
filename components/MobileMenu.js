@@ -1,13 +1,15 @@
-const MobileMenu = ({hidden, toggleMenu}) => (
+import {LoConsumer} from './LearningObjectiveProvider';
+
+const MobileMenu = () => (
     
     // if hidden 
     // display: none;
 
-    // below not working so well
-    // change setState in index out of boolean to value of css display
-    // css display with ${} classname
+<LoConsumer>
+    {({state})=> (
 
-    <div className={`mobile-menu${hidden}`}>
+
+    <div className={state.mobileMenu ? `mobile-menu-hidden` : `mobile-menu`}>
         hey
         <style jsx>{`
         .mobile-menu {
@@ -33,6 +35,8 @@ const MobileMenu = ({hidden, toggleMenu}) => (
         }
         `}</style>
     </div>
+    )}
+    </LoConsumer>
 )
 
 export default MobileMenu

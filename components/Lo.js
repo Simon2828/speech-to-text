@@ -4,8 +4,6 @@ import Link from 'next/link';
 
 class Lo extends Component {
 
-
-
   handleSubmit(event) {
     event.preventDefault();
   }
@@ -17,13 +15,12 @@ class Lo extends Component {
         <LoConsumer>
           {({ state, handleChange }) => (
             <div>
-              <p>hi I'm {state.lO}</p>
               <form onSubmit={this.handleSubmit}>
                 <label>
                   Learning Objective:
                   <input
                     type="text"
-                    // value={this.state.value}
+                    value={state.value}
                     onChange={handleChange}
                   />
                 </label>
