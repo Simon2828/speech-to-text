@@ -80,6 +80,13 @@ class SpeechToText extends React.Component {
         <React.Fragment key={i}>
           <li key={i}>
             {step}
+          <style jsx>{
+            `li {
+              background-color: rgb(255,229,100, .3);
+              margin-bottom: 10px;
+            }
+            `
+          }</style>
           </li>
           <Tick className={step ? "visible" : "hidden"} />
         </React.Fragment>
@@ -117,8 +124,16 @@ class SpeechToText extends React.Component {
     steps = this.state.transcripts.map((step, i) => {
       return (
         <React.Fragment key={i}>
-          <li key={i}>{step}</li>
+          <li key={i}>{step}
+          <style jsx>{
+            `li {
+              background-color: rgb(255,229,100, .3);
+              margin-bottom: 10px;
+            }
+            `
+          }</style>
           <Tick className={step ? "visible" : "hidden"} />
+          </li>
         </React.Fragment>
       );
     });
@@ -306,7 +321,9 @@ class SpeechToText extends React.Component {
         >
           Reset
         </Button>
-        <ol>{steps}</ol>
+        <ol className='flex'>{steps}
+
+        </ol>
         <style jsx>
           {`
             div:before {
@@ -337,6 +354,10 @@ class SpeechToText extends React.Component {
         .hidden {
           display: none;
         }
+        .flex {
+          flex-direction: column;
+          display: flex;
+      }
           `}
         </style>
         <style jsx>{`

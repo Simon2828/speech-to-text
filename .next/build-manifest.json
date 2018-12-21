@@ -11,11 +11,11 @@
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ],
-    "/learning-objective": [
+    "/index": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ],
-    "/step-to-success": [
+    "/": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ]

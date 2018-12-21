@@ -1,0 +1,40 @@
+[{
+    "id": 1,
+    "lO": "Write a poem",
+    "stepsToSuccess": ["Make it rhyme", "Include verses", "Use alliteration"],
+    "creationDate": 1431620472
+
+},
+{
+    "id": 2,
+    "lO": "Write a story",
+    "stepsToSuccess": ["Make it rhyme", "Include verses", "Use alliteration"],
+    "creationDate": 1431620473
+
+},
+{
+    "id": 3,
+    "lO": "Write a report",
+    "stepsToSuccess": ["Make it rhyme", "Include verses", "Use alliteration"],
+    "creationDate": 1431620474
+
+},
+{
+    "id": 4,
+    "lO": "Write a mystery",
+    "stepsToSuccess": ["Make it rhyme", "Include verses", "Use alliteration"],
+    "creationDate": 1431620475
+
+},
+{
+    "id": 5,
+    "lO": "Write instructions",
+    "stepsToSuccess": ["Make it rhyme", "Include verses", "Use alliteration"],
+    "creationDate": 1431620476
+
+}]
+
+
+
+ 
+

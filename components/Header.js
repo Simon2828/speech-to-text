@@ -25,8 +25,8 @@ const Header = ({toggleMenu}) => (
         <style jsx>{`
             .flex {
                 display: flex;
-                color: red;
-                background-color: yellow;
+                background-color: rgb(255,229,100, .3);
+                
             }
        `}</style>
     </div >

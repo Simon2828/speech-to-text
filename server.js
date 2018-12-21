@@ -1,3 +1,6 @@
+const Api = require('./api');
+const api = new Api();
+
 const express = require('express');
 const next = require('next');
 
@@ -10,7 +13,7 @@ app.prepare()
     const server = express();
 
     server.get('/steps-to-success/:id', (req, res) => {
-        const actualPage = 'steps'
+        const actualPage = 'steps-to-success'
         const queryParams = {title: req.params.id}
         app.render(req, res, actualPage, queryParams);
     })
@@ -23,6 +26,10 @@ app.prepare()
         if (err) throw err;
         console.log('> Ready on http://localhost:3000');
     })
+
+    console.log('api.logData()', api.logData());
+    
+
 })
 .catch((ex) => {
     console.error(ex.stack);
