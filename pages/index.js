@@ -18,7 +18,9 @@ class Index extends React.Component {
           <a>Create a new Learning Objective</a>
         </Link>
         <p>or</p>
-        <p>Search for a Learning Objective</p>
+        <Link href="/search">
+        <a>Search for a Learning Objective</a>
+        </Link>
         <style jsx>{`
             .flex-container {
                 flex-direction: column;
