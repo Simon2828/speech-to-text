@@ -7,6 +7,7 @@ const Button = (props) => (
             background: #6842f4;
             color: #FFF;
             font-size: 16px;
+            cursor: pointer;
           }
           @media (max-width: 768px) {
             button {

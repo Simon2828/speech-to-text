@@ -21,7 +21,7 @@ let stepsToSuccess;
 let newTranscripts;
 
 let steps;
-
+let circleColor;
 // use stoplistening after time period of quiet?
 // or stop listening on click - change record button to stop onclick - or have stop button
 // how to access transcript / finished transcript and save into steps to success
@@ -33,36 +33,44 @@ class SpeechToText extends React.Component {
       play: true,
       speech: "",
       show: true,
-      transcripts: [],
-      editing: false
+      editing: false,
+      tickClicked: [],
+      transcripts: []
     };
-    this.speechRef = React.createRef();
     this.handleClick = this.handleClick.bind(this);
     this.handleStop = this.handleStop.bind(this);
+    this.clickTick = this.clickTick.bind(this);
   }
+
+  componentDidMount() {
+// TODO on create localstorage rerender steps...not working - have just
+// started trying props... maybe try derivedpropsfromstate??
+
+    // if (localStorage.getItem('steps')) {
+    //   console.log('in if in componentDidMount')
+    //   this.setState({transcripts: localStorage.getItem('steps')}) 
+    // } 
+    if (this.props.stepsStorage) {
+      console.log('in if in componentDidMount')
+      this.setState({transcripts: this.props.stepsStorage}) 
+    } 
+    // else {
+    //   this.setState({transcripts: []})
+    // }
+  }
+
+  // when clicking create, localStorage is cleared
+  // steps to success still shown
 
   componentWillUnmount() {
-    this.props.stopListening();
+    // TODO how avoid this warning in devtools :
+    // Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in the componentWillUnmount method.
+    // console.log('here in unmount')
+    // // this.props.abortListening();
+    // console.log('this.props.listening', this.props.listening)
   }
 
-  // problem how to edit step from previous part in array
-  // issue with props of undefined - setState and check with that...
-
-  // make more modular - functions for updating stepstosuccess
-  // addStep()   editStepToListening()  need something for when listening for edit...
-  // if clause in component didupdate if editSteptolistening called - set state editing - boolean
-  // changeStep() - called if editStepToListening has been called above state is set
-
-  // if editing state true
-  //  changeStep()
-  // if editing state false
-  //  check if finaltranscript is 'change step x'
-  //    editStepToListening()
-  //  else addStep()
-
-  //when to reset finaltranscript - do it at end of each function...
-  // but don't call componentdidupdate
-  // check for whether finaltranscript is empty but had problems with this before...
+  
 
   editStepToListening(stepIndex) {
     // map over stepsToSuccess to avoid altering state directly
@@ -80,15 +88,18 @@ class SpeechToText extends React.Component {
         <React.Fragment key={i}>
           <li key={i}>
             {step}
-          <style jsx>{
-            `li {
-              background-color: rgb(255,229,100, .3);
-              margin-bottom: 10px;
-            }
-            `
-          }</style>
+            <style jsx>{`
+              li {
+                background-color: rgb(255, 229, 100, 0.3);
+                margin-bottom: 10px;
+                display: flex;
+              }
+            `}</style>
+            <Tick
+              className={step ? "visible" : "hidden"}
+              onClick={this.setState({ tickClicked: !this.state.tickClicked })}
+            />
           </li>
-          <Tick className={step ? "visible" : "hidden"} />
         </React.Fragment>
       );
     });
@@ -107,6 +118,8 @@ class SpeechToText extends React.Component {
   }
 
   addStep() {
+    // DUMMY SO NO NEED TO SPEAK:
+    // this.getSteps();
     if (this.props.finalTranscript.length > 1) {
       this.setState(
         {
@@ -120,19 +133,54 @@ class SpeechToText extends React.Component {
     }
   }
 
+  clickTick(i) {
+    console.log("i", i);
+    let updatedState = [...this.state.tickClicked];
+    if (updatedState[i] === undefined || updatedState[i] === "false") {
+      updatedState[i] = "true";
+    } else {
+      updatedState[i] = "false";
+    }
+    this.setState({ tickClicked: updatedState });
+    circleColor = this.state.tickClicked[i] ? "circleTicked" : "circle";
+  }
+
+
+  setLocalStorage() {
+      localStorage.setItem(`steps`, this.state.transcripts);
+  }
+
+  // set local storage with state.transcripts
+  // but not onmount because state.transcripts is empty
+
   getSteps() {
+    this.setLocalStorage();
     steps = this.state.transcripts.map((step, i) => {
       return (
         <React.Fragment key={i}>
-          <li key={i}>{step}
-          <style jsx>{
-            `li {
-              background-color: rgb(255,229,100, .3);
-              margin-bottom: 10px;
-            }
-            `
-          }</style>
-          <Tick className={step ? "visible" : "hidden"} />
+          <li key={i}>
+            {step}
+            <style jsx>{`
+              li {
+                background-color: rgb(255, 229, 100, 0.3);
+                margin-bottom: 10px;
+                border-bottom: rgb(255, 229, 100, 1) solid 1px;
+                display: flex;
+                align-items: center;
+              }
+              li::before {
+                counter-increment: steps;
+                content: counter(steps) ".";
+                margin-right: 20px;
+                padding-left: 5px;
+              }
+            `}</style>
+            <Tick
+              key={i}
+              tickClicked={circleColor}
+              className={step ? "visible" : "hidden"}
+              onClick={() => this.clickTick(i)}
+            />
           </li>
         </React.Fragment>
       );
@@ -140,67 +188,41 @@ class SpeechToText extends React.Component {
     return steps;
   }
 
-  // change() {
-  //   steps = this.state.transcripts.map((step, i) => {
-  //     if (step === "Listening...") {
-  //       step = this.props.finalTranscript;
-  //       // call setState here, don't return below??
-  //     }
-  //     return (
-  //       <React.Fragment key={i}>
-  //         <li key={i}>{step}</li>
-  //         <Tick className={step ? "visible" : "hidden"} />
-  //       </React.Fragment>
-  //     );
-  //   });
-  // }
-
   changeStep(stepIndex) {
     let newTranscripts = [...this.state.transcripts];
     newTranscripts[stepIndex + 1] = this.props.finalTranscript;
     // this.setState({ transcripts: newTranscripts }, () => this.change());
     this.setState({ transcripts: newTranscripts }, () => this.getSteps());
-
     this.setState({ editing: false });
     this.props.resetTranscript();
-    // return steps;
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.finalTranscript !== prevProps.finalTranscript) {
-      // if (this.state.editing && this.props.finalTranscript !== "") {
-      //   let transcriptIndex = this.getEndWord(this.props.finalTranscript)
-      //   this.changeStep(transcriptIndex); // put in number for argument for el in array
-      // } else {
       if (this.props.finalTranscript.slice(0, 11) === "change step") {
         // could use speech api Grammar object instead?
-
         let transcriptIndex = this.getEndWord(this.props.finalTranscript);
-
-        console.log("transcriptIndex", transcriptIndex);
-
         this.editStepToListening(transcriptIndex);
       } else {
         // check whether an element in transcripts state array is 'Listening...'
         // if it is, don't want to call addStep but change the particular element which is 'Listening...'
-
         let index;
 
-        if (
+        if (this.state.transcripts === undefined) {
+          this.addStep()
+        }
+        else if (
           this.state.transcripts.find((element, i) => {
             index = i;
             return element === "Listening...";
           }) &&
           this.props.finalTranscript !== ""
         ) {
-          console.log("changeStep called");
           this.changeStep(index - 1);
-          // use a promise for when
         } else {
           this.addStep();
         }
       }
-      // }
     }
   }
 
@@ -275,6 +297,8 @@ class SpeechToText extends React.Component {
   }
 
   render() {
+    // DUMMY SO NO NEED TO SPEAK:
+    // this.addStep();
     const {
       transcript,
       resetTranscript,
@@ -293,9 +317,7 @@ class SpeechToText extends React.Component {
     if (this.state.play) {
       display = (
         <div className={this.state.show ? "" : "hidden"}>
-        Say your steps to success
-          
-
+          Say your steps to success
         </div>
       );
       // button = <RecordButton onClick={() => { startListening(); this.handleClick(); }}>Record</RecordButton>
@@ -321,11 +343,14 @@ class SpeechToText extends React.Component {
         >
           Reset
         </Button>
-        <ol className='flex'>{steps}
-
-        </ol>
+        <ol className="flex">{steps}</ol>
+        <Button>Done</Button>
         <style jsx>
           {`
+            ol {
+              counter-reset: steps;
+            }
+
             div:before {
               content: "Say your Steps to Success";
               animation-name: listening;
@@ -334,7 +359,6 @@ class SpeechToText extends React.Component {
             }
 
             @keyframes listening {
-              
               0% {
                 content: "Say your Steps to Success";
               }
@@ -351,17 +375,17 @@ class SpeechToText extends React.Component {
                 content: "Say your Steps to Success...";
               }
             }
-        .hidden {
-          display: none;
-        }
-        .flex {
-          flex-direction: column;
-          display: flex;
-      }
+            .hidden {
+              display: none;
+            }
+            .flex {
+              flex-direction: column;
+              display: flex;
+              list-style-type: decimal;
+            }
           `}
         </style>
         <style jsx>{`
-          margin-left: 10px;
           margin-top: 20px;
         `}</style>
       </div>

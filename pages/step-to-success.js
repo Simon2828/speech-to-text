@@ -14,8 +14,13 @@ class Index extends React.Component {
             recording: false,
             learningObjective: ''
         }
+        this.keyCount = 0;
+        this.getKey = this.getKey.bind(this);
     }
 
+    getKey() {
+        return this.keyCount++
+    }
 
     render() {
         return (
@@ -26,7 +31,7 @@ class Index extends React.Component {
                         {({state})=><h4>L.O. {state.value}</h4>}
                     </LoConsumer>
                     <NoSSR onSSR={<LoadingIndicator />}>  
-                <SpeechToText />                 
+                <SpeechToText stepsStorage={localStorage.getItem('steps')} key={this.getKey()}/>                 
                     </NoSSR>
                 </Layout>
             </div>

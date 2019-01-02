@@ -2,7 +2,7 @@ import Header from './Header'
 import Head from 'next/head'
 import MobileMenu from './MobileMenu'
 
-const layoutStyle = {
+let layoutStyle = {
   margin: 20,
   padding: 20,
   minHeight: 100
@@ -17,14 +17,13 @@ const Layout = (props) => (
     </Head>
   <Header />
   <MobileMenu />
-
         <style jsx global>{`
                   
                   * { box-sizing: border-box; margin: 0; padding: 0 }
                   
-  
+                  
                   body { 
-                      font: 16px menlo;
+                    font: 20px menlo;
                   }
                   `}</style>
     <div style={layoutStyle}>

@@ -1,10 +1,26 @@
-const Tick = (props) => (
-<div className={`icon-animated icon-animated-tick ${props.className}`} tabIndex="-1" aria-hidden="true">
-	<svg className="circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+class Tick extends React.Component {
+constructor(props) {
+    super(props);
+    this.state = {
+        tickColor: false
+    }
+    this.changeTickColor = this.changeTickColor.bind(this);
+} 
+
+changeTickColor() {
+    this.setState({tickColor: !this.state.tickColor})
+}
+
+render() {
+
+return (
+<div onClick={()=>{this.props.onClick(); this.changeTickColor()}} className={`icon-animated icon-animated-tick ${this.props.className}`} tabIndex="-1" aria-hidden="true">
+
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className={this.state.tickColor ? 'circle-ticked' : 'circle'}> 
 		<circle cx="50" cy="50" r="50"/>
 	</svg>
 
-	<div className="tick">
+	<div className={`tick`}>
 		<svg className="tick-leg1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 52">
 			<polygon className="" points="1,41 0,48 25,52 25,45" />
 		</svg>
@@ -32,8 +48,12 @@ const Tick = (props) => (
                 width: 12px;
                 height: 26px;
             }
-            
+
             .icon-animated-tick .circle {
+                fill: rgb(255, 229, 100, 0.2);
+            }
+            
+            .icon-animated-tick .circle-ticked {
                 fill: #60D154;
                 animation-fill-mode: forwards;
                 animation-name: circle-pulse;
@@ -42,7 +62,7 @@ const Tick = (props) => (
             }
             
             .tick-leg1 {
-                fill: #fff;
+                fill: rgb(255, 229, 100, 0.3);
                 animation-fill-mode: forwards;
                 animation-name: tick-swipe2;
                 animation-duration: 500ms;
@@ -53,7 +73,7 @@ const Tick = (props) => (
             }
             
             .tick-leg2 {
-                fill: #fff;
+                fill: rgb(255, 229, 100, 0.3);
                 animation-fill-mode: forwards;
                 animation-name: tick-swipe2;
                 animation-duration: 500ms;
@@ -68,7 +88,7 @@ const Tick = (props) => (
             }
 
             .visible {
-                margin-left: 20px;
+                margin: 10px 20px 10px auto;
             }
             
             @keyframes tick-swipe1 {
@@ -128,6 +148,8 @@ const Tick = (props) => (
             }
         `}</style>
     </div>
-)
+)}
+
+        }
 
 export default Tick;

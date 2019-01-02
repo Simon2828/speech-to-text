@@ -1,7 +1,5 @@
-import SpeechToText from "../components/SpeechToText";
+const sum = require('../sum');
 
-describe("SpeechToText", () => {
-    it('should...', () => {
-        
-    })
-})
+test('adds 1 + 2 to equal 3', () => {
+    expect(sum(1,2)).toBe(3)
+});

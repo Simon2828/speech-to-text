@@ -12,9 +12,9 @@ app.prepare()
 .then(() => {
     const server = express();
 
-    server.get('/steps-to-success/:id', (req, res) => {
-        const actualPage = 'steps-to-success'
-        const queryParams = {title: req.params.id}
+    server.get('/learning-objective/:id', (req, res) => {
+        const actualPage = '/lo'
+        const queryParams = {learningObjective: req.params.id}
         app.render(req, res, actualPage, queryParams);
     })
 

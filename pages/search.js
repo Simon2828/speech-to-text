@@ -6,7 +6,7 @@ import Layout from '../components/Layout';
 export default () => (
     <Layout>
         <ul>
-        <LoLink learningObjective="Write a poem" />
+        <LoLink id='write-a-poem' learningObjective="Write a poem" />
         </ul>
     </Layout>
 )
