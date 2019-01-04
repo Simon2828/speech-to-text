@@ -22,9 +22,6 @@ let newTranscripts;
 
 let steps;
 let circleColor;
-// use stoplistening after time period of quiet?
-// or stop listening on click - change record button to stop onclick - or have stop button
-// how to access transcript / finished transcript and save into steps to success
 
 class SpeechToText extends React.Component {
   constructor(props) {
@@ -42,25 +39,31 @@ class SpeechToText extends React.Component {
     this.clickTick = this.clickTick.bind(this);
   }
 
+  
   componentDidMount() {
-// TODO on create localstorage rerender steps...not working - have just
-// started trying props... maybe try derivedpropsfromstate??
+    // TODO 
+    
+    // Refactor to make {steps} a controlled component taking in only props... hopefully
+    // that should solve prob.
+    
+    // when clicking create, localStorage is cleared
+    // steps to success still shown
+    // localstorage into state
 
-    // if (localStorage.getItem('steps')) {
-    //   console.log('in if in componentDidMount')
-    //   this.setState({transcripts: localStorage.getItem('steps')}) 
-    // } 
-    if (this.props.stepsStorage) {
+    if (localStorage.getItem('steps')) {
       console.log('in if in componentDidMount')
-      this.setState({transcripts: this.props.stepsStorage}) 
+      this.setState({transcripts: localStorage.getItem('steps')}) 
     } 
+ 
+    // if (this.props.stepsStorage) {
+    //   console.log('in if in componentDidMount')
+    //   this.setState({transcripts: this.props.stepsStorage}) 
+    // } 
     // else {
     //   this.setState({transcripts: []})
     // }
   }
 
-  // when clicking create, localStorage is cleared
-  // steps to success still shown
 
   componentWillUnmount() {
     // TODO how avoid this warning in devtools :
@@ -75,8 +78,6 @@ class SpeechToText extends React.Component {
   editStepToListening(stepIndex) {
     // map over stepsToSuccess to avoid altering state directly
     let n = stepIndex; // n is argument - change
-
-    console.log("n", n);
 
     // state to be updated as steps
 

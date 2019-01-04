@@ -31,7 +31,7 @@ class Index extends React.Component {
                         {({state})=><h4>L.O. {state.value}</h4>}
                     </LoConsumer>
                     <NoSSR onSSR={<LoadingIndicator />}>  
-                <SpeechToText stepsStorage={localStorage.getItem('steps')} key={this.getKey()}/>                 
+                <SpeechToText stepsStorage={'hey'} key={this.getKey()}/>                 
                     </NoSSR>
                 </Layout>
             </div>
