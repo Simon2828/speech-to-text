@@ -3,8 +3,8 @@ import { PropTypes } from "react";
 import RecordButton from "./RecordButton";
 import StopButton from "./StopButton";
 import Button from "../components/Button";
-import Tick from "../components/Tick";
 import { runInThisContext } from "vm";
+import Steps from "../components/Steps";
 
 // const propTypes = {
 //     // Props injected by SpeechRecognition
@@ -39,31 +39,24 @@ class SpeechToText extends React.Component {
     this.clickTick = this.clickTick.bind(this);
   }
 
-  
   componentDidMount() {
-    // TODO 
-    
-    // Refactor to make {steps} a controlled component taking in only props... hopefully
-    // that should solve prob.
-    
-    // when clicking create, localStorage is cleared
-    // steps to success still shown
-    // localstorage into state
+    // TODO - use default props to pass down to steps - bug when back click then
+    // forward click browser...
 
-    if (localStorage.getItem('steps')) {
-      console.log('in if in componentDidMount')
-      this.setState({transcripts: localStorage.getItem('steps')}) 
-    } 
- 
+
+    if (localStorage.getItem("steps")) {
+      console.log("in if in componentDidMount");
+      this.setState({ transcripts: localStorage.getItem("steps").split(',') });
+    }
+
     // if (this.props.stepsStorage) {
     //   console.log('in if in componentDidMount')
-    //   this.setState({transcripts: this.props.stepsStorage}) 
-    // } 
+    //   this.setState({transcripts: this.props.stepsStorage})
+    // }
     // else {
     //   this.setState({transcripts: []})
     // }
   }
-
 
   componentWillUnmount() {
     // TODO how avoid this warning in devtools :
@@ -73,37 +66,12 @@ class SpeechToText extends React.Component {
     // console.log('this.props.listening', this.props.listening)
   }
 
-  
-
+  // TODO refactor into Steps.js?? how to deal with stepIndex??
   editStepToListening(stepIndex) {
     // map over stepsToSuccess to avoid altering state directly
     let n = stepIndex; // n is argument - change
 
     // state to be updated as steps
-
-    steps = this.state.transcripts.map((step, i) => {
-      if (i + 1 === Number(n)) {
-        step = "Listening...";
-      }
-      return (
-        <React.Fragment key={i}>
-          <li key={i}>
-            {step}
-            <style jsx>{`
-              li {
-                background-color: rgb(255, 229, 100, 0.3);
-                margin-bottom: 10px;
-                display: flex;
-              }
-            `}</style>
-            <Tick
-              className={step ? "visible" : "hidden"}
-              onClick={this.setState({ tickClicked: !this.state.tickClicked })}
-            />
-          </li>
-        </React.Fragment>
-      );
-    });
 
     // make copy of array so not mutating directly
     // need to change a particular element in the state array
@@ -134,6 +102,7 @@ class SpeechToText extends React.Component {
     }
   }
 
+  // Delete clickTick?? Tick.js has local state
   clickTick(i) {
     console.log("i", i);
     let updatedState = [...this.state.tickClicked];
@@ -146,9 +115,8 @@ class SpeechToText extends React.Component {
     circleColor = this.state.tickClicked[i] ? "circleTicked" : "circle";
   }
 
-
   setLocalStorage() {
-      localStorage.setItem(`steps`, this.state.transcripts);
+    localStorage.setItem(`steps`, this.state.transcripts);
   }
 
   // set local storage with state.transcripts
@@ -156,37 +124,6 @@ class SpeechToText extends React.Component {
 
   getSteps() {
     this.setLocalStorage();
-    steps = this.state.transcripts.map((step, i) => {
-      return (
-        <React.Fragment key={i}>
-          <li key={i}>
-            {step}
-            <style jsx>{`
-              li {
-                background-color: rgb(255, 229, 100, 0.3);
-                margin-bottom: 10px;
-                border-bottom: rgb(255, 229, 100, 1) solid 1px;
-                display: flex;
-                align-items: center;
-              }
-              li::before {
-                counter-increment: steps;
-                content: counter(steps) ".";
-                margin-right: 20px;
-                padding-left: 5px;
-              }
-            `}</style>
-            <Tick
-              key={i}
-              tickClicked={circleColor}
-              className={step ? "visible" : "hidden"}
-              onClick={() => this.clickTick(i)}
-            />
-          </li>
-        </React.Fragment>
-      );
-    });
-    return steps;
   }
 
   changeStep(stepIndex) {
@@ -210,9 +147,8 @@ class SpeechToText extends React.Component {
         let index;
 
         if (this.state.transcripts === undefined) {
-          this.addStep()
-        }
-        else if (
+          this.addStep();
+        } else if (
           this.state.transcripts.find((element, i) => {
             index = i;
             return element === "Listening...";
@@ -257,46 +193,6 @@ class SpeechToText extends React.Component {
     }
   }
 
-  editStep() {
-    console.log("finaltrans", this.props.finalTranscript);
-    switch (this.props.finalTranscript) {
-      case "change step 1":
-        console.log("1");
-        // update state of transcripts
-        newTranscripts = [...this.state.transcripts];
-        newTranscripts[0] = "Listening...";
-        this.setState({ transcripts: newTranscripts });
-        this.props.resetTranscript();
-        break;
-      case "change step 2":
-        console.log("2");
-        break;
-      case "change step 3":
-        console.log("3");
-        break;
-    }
-    this.props.resetTranscript();
-  }
-
-  // when to rerecord
-  // in componentdidupdate
-  // if stepstosuccess[0] is 'Listening...
-  // set state of transcripts to 0 using same technique as in editstep - spread operator
-
-  reRecordStep() {
-    console.log("in rerecord");
-    if (this.props.finalTranscript) {
-      // update state
-      console.log("in rerecord true");
-      const updatedTranscripts = [...this.state.transcripts];
-      updatedTranscripts[0] = this.props.finalTranscript;
-      console.log("updatedTranscrips[0]", updatedTranscripts[0]);
-    } else {
-      console.log("in else");
-      this.reRecordStep();
-    }
-  }
-
   render() {
     // DUMMY SO NO NEED TO SPEAK:
     // this.addStep();
@@ -336,15 +232,26 @@ class SpeechToText extends React.Component {
       );
     }
 
+    let steps;
+
+    // if (this.state.trancripts === undefined) {
+    //   steps = null;
+    // } else {
+      steps = (
+        <Steps
+          transcripts={this.state.transcripts}
+          onClick={i => this.clickTick(i)}
+        />
+      );
+    // }
+
     return (
       <div>
         <Button
           className={this.props.finalTranscript ? "" : "hidden"}
           onClick={resetTranscript}
-        >
-          Reset
-        </Button>
-        <ol className="flex">{steps}</ol>
+        />
+        <ol className="flex">{steps} </ol>
         <Button>Done</Button>
         <style jsx>
           {`
