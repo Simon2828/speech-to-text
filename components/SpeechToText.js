@@ -1,10 +1,13 @@
 import SpeechRecognition from "react-speech-recognition";
 import { PropTypes } from "react";
 import RecordButton from "./RecordButton";
+import RecordingText from "./RecordingText";
+import StopRecordingButton from "./StopRecordingButton";
 import StopButton from "./StopButton";
 import Button from "../components/Button";
 import { runInThisContext } from "vm";
 import Steps from "../components/Steps";
+import Paused from "../components/Paused";
 
 // const propTypes = {
 //     // Props injected by SpeechRecognition
@@ -37,16 +40,16 @@ class SpeechToText extends React.Component {
     this.handleClick = this.handleClick.bind(this);
     this.handleStop = this.handleStop.bind(this);
     this.clickTick = this.clickTick.bind(this);
+    this.clearAllSteps = this.clearAllSteps.bind(this);
   }
 
   componentDidMount() {
     // TODO - use default props to pass down to steps - bug when back click then
     // forward click browser...
 
-
     if (localStorage.getItem("steps")) {
       console.log("in if in componentDidMount");
-      this.setState({ transcripts: localStorage.getItem("steps").split(',') });
+      this.setState({ transcripts: localStorage.getItem("steps").split(",") });
     }
 
     // if (this.props.stepsStorage) {
@@ -193,6 +196,10 @@ class SpeechToText extends React.Component {
     }
   }
 
+  clearAllSteps() {
+    this.setState({transcripts: []})
+  }
+
   render() {
     // DUMMY SO NO NEED TO SPEAK:
     // this.addStep();
@@ -217,7 +224,6 @@ class SpeechToText extends React.Component {
           Say your steps to success
         </div>
       );
-      // button = <RecordButton onClick={() => { startListening(); this.handleClick(); }}>Record</RecordButton>
     } else {
       display = (
         <StopButton
@@ -237,12 +243,12 @@ class SpeechToText extends React.Component {
     // if (this.state.trancripts === undefined) {
     //   steps = null;
     // } else {
-      steps = (
-        <Steps
-          transcripts={this.state.transcripts}
-          onClick={i => this.clickTick(i)}
-        />
-      );
+    steps = (
+      <Steps
+        transcripts={this.state.transcripts}
+        onClick={i => this.clickTick(i)}
+      />
+    );
     // }
 
     return (
@@ -251,38 +257,23 @@ class SpeechToText extends React.Component {
           className={this.props.finalTranscript ? "" : "hidden"}
           onClick={resetTranscript}
         />
+        {this.props.listening ? <RecordingText /> : <Paused />}
         <ol className="flex">{steps} </ol>
+
+        <Button onClick={this.clearAllSteps}>Clear All</Button>
         <Button>Done</Button>
+        {this.props.listening ? (
+          <StopRecordingButton onClick={stopListening} />
+        ) : (
+          <RecordButton onClick={startListening} />
+        )}
+
         <style jsx>
           {`
             ol {
               counter-reset: steps;
             }
 
-            div:before {
-              content: "Say your Steps to Success";
-              animation-name: listening;
-              animation-duration: 2.5s;
-              animation-iteration-count: infinite;
-            }
-
-            @keyframes listening {
-              0% {
-                content: "Say your Steps to Success";
-              }
-
-              25% {
-                content: "Say your Steps to Success.";
-              }
-
-              50% {
-                content: "Say your Steps to Success..";
-              }
-
-              75% {
-                content: "Say your Steps to Success...";
-              }
-            }
             .hidden {
               display: none;
             }
